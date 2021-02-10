@@ -1,2 +1,6 @@
-const mongoode = require('mongoode');
-module.exports = {}
+const { Router } = require('express');
+const express = require('express');
+const doctor = require('../models/doctor');
+const router = new express.Router();
+
+module.exports = router;
