@@ -7,7 +7,7 @@ router.post("/", async (req, res) => {
     try {
         await patient.save();
         res.status(201).send({
-            patient
+            patient,
         })
     } catch (e) {
         res.status(400).send(e)
