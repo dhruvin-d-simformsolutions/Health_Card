@@ -6,7 +6,6 @@ router.post("/", async (req, res) => {
     const patient = new Patient(req.body)
     try {
         await patient.save();
-        console.log(patient);
         res.status(201).send({
             patient
         })
