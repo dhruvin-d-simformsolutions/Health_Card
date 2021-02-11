@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 const validator = require('validator');
 var Schema = require('mongoose').Schema;
 
-var patientSchema = new Schema({
+var PatientSchema = new Schema({
     healthid: {
         type: String,
         unique: true,
@@ -111,5 +111,21 @@ var patientSchema = new Schema({
 // }, {
 //     timestamps: true
 // })
+PatientSchema.methods.generatetokens = async function(){
+    const user = this;
+    const token = jwt.sign({ _id: user._id.toString() }, process.env.SECRETKEYFORJWT);
+    user.tokens = user.tokens.concat([{token}]);
+    await user.save();
+    return token
+}
 
-module.exports = mongoose.model('patients', patientSchema);
+PatientSchema.pre('save',async function(next){
+    const user = this;
+    if(user.isModified('password')){
+        user.password = await bcrypt.hash(user.password,8);
+    }
+    next();
+})
+
+const Patient = mongoose.model('patients', patientSchema);
+module.exports = Patient;
