@@ -3,6 +3,7 @@ const validator = require('validator');
 const {Schema} = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const {globaltokengenerator} = require('../utils/generatetoken');
 
 var PatientSchema = new Schema({
     healthid: {
@@ -113,21 +114,37 @@ var PatientSchema = new Schema({
 // }, {
 //     timestamps: true
 // })
-PatientSchema.methods.generatetokens = async function(){
-    const user = this;
-    const generatedtoken = jwt.sign({ _id: user._id.toString() }, process.env.SECRETKEYFORJWT);
-    user.token = generatedtoken;
-    await user.save();
-    return token
+
+
+// PatientSchema.methods.generatetokens = globaltokengenerator();
+// PatientSchema.methods.generatetokens = async function(){
+//     const patient = this;
+//     return globaltokengenerator(patient);
+//     // const generatedtoken = jwt.sign({ _id: patient._id.toString() }, process.env.SECRETKEYFORJWT);
+//     // patient.token = generatedtoken;
+//     // await patient.save();
+//     // return generatedtoken
+// }
+
+PatientSchema.statics.findByCredentials = async (healthid,password) => {
+    const patient = await Patient.findOne({healthid});
+    if(!patient){
+        throw new Error("User is not Available");
+    }
+    isverify = await bcrypt.compare(password,patient.password)
+    if(!isverify){
+        throw new Error('Healthid and password does not match !!!');
+    }
+    return patient;
 }
 
 PatientSchema.pre('save',async function(next){
-    const user = this;
-    if(user.isModified('password')){
-        user.password = await bcrypt.hash(user.password,8);
+    const patient = this;
+    if(patient.isModified('password')){
+        patient.password = await bcrypt.hash(patient.password,8);
     }
     next();
 })
 
-const Patient = mongoose.model('patients', PatientSchema);
+const Patient = mongoose.model('patient', PatientSchema);
 module.exports = Patient;
