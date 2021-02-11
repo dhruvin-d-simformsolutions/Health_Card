@@ -3,6 +3,7 @@ const validator = require('validator');
 const {Schema} = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const {globaltokengenerator} = require('../utils/generatetoken');
 
 var PatientSchema = new Schema({
     healthid: {
@@ -113,21 +114,17 @@ var PatientSchema = new Schema({
 // }, {
 //     timestamps: true
 // })
-PatientSchema.methods.generatetokens = async function(){
-    const patient = this;
-    const generatedtoken = jwt.sign({ _id: patient._id.toString() }, process.env.SECRETKEYFORJWT);
-    patient.token = generatedtoken;
-    await patient.save();
-    return generatedtoken
-}
 
-PatientSchema.methods.toJSON = function() {
-    const patient = this;
-    const patientObject = patient.toObject();
-    delete patientObject.password
-    delete patientObject.token
-    return patientObject
-}
+
+// PatientSchema.methods.generatetokens = globaltokengenerator();
+// PatientSchema.methods.generatetokens = async function(){
+//     const patient = this;
+//     return globaltokengenerator(patient);
+//     // const generatedtoken = jwt.sign({ _id: patient._id.toString() }, process.env.SECRETKEYFORJWT);
+//     // patient.token = generatedtoken;
+//     // await patient.save();
+//     // return generatedtoken
+// }
 
 PatientSchema.statics.findByCredentials = async (healthid,password) => {
     const patient = await Patient.findOne({healthid});
@@ -150,4 +147,4 @@ PatientSchema.pre('save',async function(next){
 })
 
 const Patient = mongoose.model('patient', PatientSchema);
-module.exports = Patient;   
+module.exports = Patient;
