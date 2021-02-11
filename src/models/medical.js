@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const {Schema} = require('mongoose');
-const validate = require('validator');
+const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 const MedicalsSchema = new Schema({
     medicalid:{ type: String, required: true },
@@ -52,5 +53,15 @@ const MedicalsSchema = new Schema({
     },
     
 },{timestamps:true})
+
+
+
+MedicalsSchema.pre('save',async function(next){
+    const medical = this;
+    if(medical.isModified('password')){
+        medical.password = await bcrypt.hash(medical.password,8);
+    }
+    next();
+})
 const Medical =  mongoose.model('medical',MedicalsSchema);
 module.exports = Medical;

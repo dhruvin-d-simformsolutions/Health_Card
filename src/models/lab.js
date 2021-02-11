@@ -3,7 +3,7 @@ const validator = require('validator');
 const {
   Schema
 } = require("mongoose");
-const validate = require('validator');
+const bcrypt = require('bcryptjs');
 
 const LabsSchema = new Schema({
   labid: {
@@ -81,6 +81,14 @@ const LabsSchema = new Schema({
   timestamps: true
 });
 
+
+LabsSchema.pre('save',async function(next){
+  const lab = this;
+  if(lab.isModified('password')){
+      lab.password = await bcrypt.hash(lab.password,8);
+  }
+  next();
+})
 const Lab = mongoose.model("lab", LabsSchema);
 module.exports = Lab;
 

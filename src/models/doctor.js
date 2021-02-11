@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const {Schema} = require('mongoose');
 const validator = require('validator');
-const validate = require('validator');
+const bcrypt = require('bcryptjs');
 
 const DoctorsSchema = new Schema({
     doctorid: {
@@ -87,6 +87,12 @@ const DoctorsSchema = new Schema({
 }, {
     timestamps: true
 })
-
+DoctorsSchema.pre('save',async function(next){
+    const doctor = this;
+    if(doctor.isModified('password')){
+        doctor.password = await bcrypt.hash(doctor.password,8);
+    }
+    next();
+})
 const Doctor = mongoose.model('doctor', DoctorsSchema);
 module.exports = Doctor;

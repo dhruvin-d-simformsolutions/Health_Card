@@ -50,7 +50,6 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-
 router.post("/login", async (req, res) => {
   try {
     const user = await findByCredentials(req.body.username, req.body.password);
@@ -66,12 +65,15 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// router.post("/logout",async (req,res)=>{
-//   try {
+router.post("/logout",auth,async (req,res)=>{
+  try {
+    req.user.token = null
+    await req.user.save();
+    res.send("Logout Successful")
     
-//   } catch (e) {
-//     res.status(500).send(e.message)
-//   }
-// })
+  } catch (e) {
+    res.status(500).send(e.message)
+  }
+})
 
 module.exports = router;
