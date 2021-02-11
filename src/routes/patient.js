@@ -19,6 +19,17 @@ router.post("/signup", async (req, res) => {
     }
 });
 
+
+router.post('/login',async (req,res)=>{
+    try{
+        const patient = await Patient.findByCredentials(req.body.healthid,req.body.password);
+        const token = await patient.generatetokens();
+        res.status(200).send({patient,token});
+    }catch(err){
+        res.send(err.message);
+    }
+})
+
 // router.post('/login',()=>{
 
 // })
