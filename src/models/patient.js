@@ -1,6 +1,8 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const validator = require('validator');
-var Schema = require('mongoose').Schema;
+const {Schema} = require('mongoose');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 var PatientSchema = new Schema({
     healthid: {
