@@ -24,7 +24,7 @@ var PatientSchema = new Schema({
             type: String,
             required: true,
         },
-        //TODO : change type to date
+        // TODO : change type to date
         dob: {
             type: String,
             required: true,
@@ -85,7 +85,7 @@ var PatientSchema = new Schema({
         }],
         bloodGroup: String
     },
-    tokens : {
+    token : {
         type: String,
     }
 }, {
@@ -115,8 +115,8 @@ var PatientSchema = new Schema({
 // })
 PatientSchema.methods.generatetokens = async function(){
     const user = this;
-    const token = jwt.sign({ _id: user._id.toString() }, process.env.SECRETKEYFORJWT);
-    user.tokens = user.tokens.concat([{token}]);
+    const generatedtoken = jwt.sign({ _id: user._id.toString() }, process.env.SECRETKEYFORJWT);
+    user.token = generatedtoken;
     await user.save();
     return token
 }
@@ -129,5 +129,5 @@ PatientSchema.pre('save',async function(next){
     next();
 })
 
-const Patient = mongoose.model('patients', patientSchema);
+const Patient = mongoose.model('patients', PatientSchema);
 module.exports = Patient;
