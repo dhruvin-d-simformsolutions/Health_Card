@@ -1,5 +1,6 @@
 const express = require('express');
 const Patient = require("../models/patient");
+const {patientauth} = require('../middleware/auth');
 const router = new express.Router();
 
 router.post("/signup", async (req, res) => {
@@ -30,8 +31,16 @@ router.post('/login',async (req,res)=>{
     }
 })
 
-// router.post('/login',()=>{
-
-// })
+router.post('/logout',patientauth,async (req,res)=>{
+    try {
+        req.patient.token = null;
+        await req.patient.save();
+        res.send(
+            "Logout successful"
+        )
+    } catch (e) {
+        res.status(500).send()
+    }
+})
 
 module.exports = router;
