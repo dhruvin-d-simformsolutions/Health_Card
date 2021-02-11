@@ -47,6 +47,9 @@ const MedicalsSchema = new Schema({
         medicalmobile:{type:Number,required:true}   
     },
     approved: Boolean,
+    token: {
+        type: String,
+    },
     
 },{timestamps:true})
 const Medical =  mongoose.model('medical',MedicalsSchema);

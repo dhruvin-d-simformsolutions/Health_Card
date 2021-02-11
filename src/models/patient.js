@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const {Schema} = require('mongoose');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const {globaltokengenerator} = require('../utils/generatetoken');
+
 
 var PatientSchema = new Schema({
     healthid: {
@@ -126,17 +125,17 @@ var PatientSchema = new Schema({
 //     // return generatedtoken
 // }
 
-PatientSchema.statics.findByCredentials = async (healthid,password) => {
-    const patient = await Patient.findOne({healthid});
-    if(!patient){
-        throw new Error("User is not Available");
-    }
-    isverify = await bcrypt.compare(password,patient.password)
-    if(!isverify){
-        throw new Error('Healthid and password does not match !!!');
-    }
-    return patient;
-}
+// PatientSchema.statics.findByCredentials = async (healthid,password) => {
+//     const patient = await Patient.findOne({healthid});
+//     if(!patient){
+//         throw new Error("User is not Available");
+//     }
+//     isverify = await bcrypt.compare(password,patient.password)
+//     if(!isverify){
+//         throw new Error('Healthid and password does not match !!!');
+//     }
+//     return patient;
+// }
 
 PatientSchema.pre('save',async function(next){
     const patient = this;

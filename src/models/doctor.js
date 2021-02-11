@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const {Schema} = require('mongoose');
+const validator = require('validator');
 const validate = require('validator');
 
 const DoctorsSchema = new Schema({
@@ -78,6 +79,9 @@ const DoctorsSchema = new Schema({
         }
     },
     approved: Boolean,
+    token: {
+        type: String,
+    },
     // date: Date,
 
 }, {
