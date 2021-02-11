@@ -1,20 +1,18 @@
-var mongoose = require('mongoose');
-var Schema = require('mongoose').Schema;
+const mongoose = require('mongoose');
+const {Schema} = require('mongoose');
+const validate = require('validator');
 
-var doctorsSchema = new Schema({
+const DoctorsSchema = new Schema({
     doctorid: {
         type: String,
         required: true,
     },
-    details: {
+    ownerdetails: {
         fname: {
             type: String,
             required: true,
         },
-        mname: {
-            type: String,
-            required: true,
-        },
+        mname: String,
         lname: {
             type: String,
             required: true,
@@ -23,10 +21,8 @@ var doctorsSchema = new Schema({
             type: String,
             required: true,
         },
-        dob: {
-            type: Date,
-            required: true,
-        },
+        dob: String,
+        //TODO :type change to DOB
         licenseNumber: {
             type: String,
             unique: true,
@@ -34,25 +30,27 @@ var doctorsSchema = new Schema({
         },
         license: String
     },
-    credentials: {
-        password: {
-            type: String,
-            required: true
-        }
+    password: {
+        type: String,
+        required: true
     },
     contacts: {
         mobile: {
             type: Number,
-            required: true
+            required: true,
         },
         email: {
             type: String,
-            required: true
-        }
-    },
-    doctorDetails: {
-        degree: String,
-        speciality: Array,
+            unique: true,
+            required: true,
+            trim: true,
+            lowercase: true,
+            validate(value) {
+            if (!validator.isEmail(value)) {
+                throw new Error("Email is invalid");
+            }
+            },
+        },
     },
     address: {
         addressLine1: String,
@@ -60,22 +58,31 @@ var doctorsSchema = new Schema({
         city: String,
         state: String,
         pincode: {
-            type: Number
-        }
+            type: Number,
+            required: true,
+        },
+    },
+    doctorDetails: {
+        degree: String,
+        speciality: [
+            {
+                type:String,
+            }
+        ],
     },
     hospitalContacts: {
-        hname: String,
-        hmobile: {
+        hospitalname: String,
+        hospitalmobile: {
             type: Number,
             required: true
         }
     },
-    approve: Boolean,
-    date: Date,
-
+    approved: Boolean,
+    // date: Date,
 
 }, {
     timestamps: true
 })
 
-module.exports = mongoose.model('doctors', doctorsSchema);
+const Doctor = mongoose.model('doctor', DoctorsSchema);
+module.exports = Doctor;
