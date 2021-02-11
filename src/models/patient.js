@@ -121,6 +121,14 @@ PatientSchema.methods.generatetokens = async function(){
     return generatedtoken
 }
 
+PatientSchema.methods.toJSON = function() {
+    const patient = this;
+    const patientObject = patient.toObject();
+    delete patientObject.password
+    delete patientObject.token
+    return patientObject
+}
+
 PatientSchema.statics.findByCredentials = async (healthid,password) => {
     const patient = await Patient.findOne({healthid});
     if(!patient){
