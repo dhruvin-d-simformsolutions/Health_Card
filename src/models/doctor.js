@@ -88,7 +88,7 @@ const DoctorsSchema = new Schema({
     timestamps: true
 })
 
-DoctorsSchema.methods.toJson = function(){
+DoctorsSchema.methods.toJSON = function(){
     const user = this
     const userObject = user.toObject()
     delete userObject.password
@@ -99,7 +99,7 @@ DoctorsSchema.methods.toJson = function(){
 DoctorsSchema.pre('save',async function(next){
     const doctor = this;
     if(doctor.isModified('password')){
-        doctor.password = await bcrypt.hash(doctor.password,8);
+        doctor.password = await Encryptpassword(doctor.password);
     }
     next();
 })
