@@ -76,5 +76,12 @@ router.post("/logout",auth,async (req,res)=>{
   }
 })
 
+router.get('/getprofile',auth,async (req,res)=>{
+  try{
+    res.send(req.user);
+  }catch(err){
+    res.status(400).send(err.meassage);
+  }
+})
 
 module.exports = router;
