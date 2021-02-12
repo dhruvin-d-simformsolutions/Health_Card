@@ -8,7 +8,7 @@ const DoctorsSchema = new Schema({
         type: String,
         required: true,
     },
-    ownerdetails: {
+    details: {
         fname: {
             type: String,
             required: true,

@@ -113,29 +113,20 @@ var PatientSchema = new Schema({
 // }, {
 //     timestamps: true
 // })
+PatientSchema.virtual('histories',{
+    ref : 'HistoryOfPatient',
+    localField : 'healthid',
+    foreignField : 'healthid'
+})
 
 
-// PatientSchema.methods.generatetokens = globaltokengenerator();
-// PatientSchema.methods.generatetokens = async function(){
-//     const patient = this;
-//     return globaltokengenerator(patient);
-//     // const generatedtoken = jwt.sign({ _id: patient._id.toString() }, process.env.SECRETKEYFORJWT);
-//     // patient.token = generatedtoken;
-//     // await patient.save();
-//     // return generatedtoken
-// }
-
-// PatientSchema.statics.findByCredentials = async (healthid,password) => {
-//     const patient = await Patient.findOne({healthid});
-//     if(!patient){
-//         throw new Error("User is not Available");
-//     }
-//     isverify = await bcrypt.compare(password,patient.password)
-//     if(!isverify){
-//         throw new Error('Healthid and password does not match !!!');
-//     }
-//     return patient;
-// }
+PatientSchema.methods.toJson = function(){
+    const user = this
+    const userObject = user.toObject()
+    delete userObject.password
+    delete userObject.token
+    return userObject
+}
 
 PatientSchema.pre('save',async function(next){
     const patient = this;

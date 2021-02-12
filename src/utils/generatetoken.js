@@ -10,7 +10,6 @@ globaltokengenerator = async function(user){
     await user.save();
     return generatedtoken
 }
-
 module.exports = {
     globaltokengenerator,
 }
