@@ -8,7 +8,7 @@ const DoctorsSchema = new Schema({
         type: String,
         required: true,
     },
-    ownerdetails: {
+    details: {
         fname: {
             type: String,
             required: true,
@@ -87,6 +87,15 @@ const DoctorsSchema = new Schema({
 }, {
     timestamps: true
 })
+
+DoctorsSchema.methods.toJson = function(){
+    const user = this
+    const userObject = user.toObject()
+    delete userObject.password
+    delete userObject.token
+    return userObject
+}
+
 DoctorsSchema.pre('save',async function(next){
     const doctor = this;
     if(doctor.isModified('password')){

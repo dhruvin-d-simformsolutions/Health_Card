@@ -23,7 +23,7 @@ router.post("/signup", async (req, res) => {
         break;
       case "D":
         user = new Doctor(req.body);
-        user.doctorid = "D" + user.ownerdetails.licenseNumber;
+        user.doctorid = "D" + user.details.licenseNumber;
         break;
       case "L":
         user = new Lab(req.body);
@@ -67,12 +67,20 @@ router.post("/login", async (req, res) => {
 
 router.post("/logout",auth,async (req,res)=>{
   try {
-    req.user.token = null
+    req.user.token = undefined
     await req.user.save();
     res.send("Logout Successful")
     
   } catch (e) {
     res.status(500).send(e.message)
+  }
+})
+
+router.get('/getprofile',auth,async (req,res)=>{
+  try{
+    res.send(req.user);
+  }catch(err){
+    res.status(400).send(err.meassage);
   }
 })
 

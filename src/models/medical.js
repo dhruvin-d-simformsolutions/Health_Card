@@ -10,7 +10,7 @@ const MedicalsSchema = new Schema({
         mname:String,
         lname:{ type: String, required: true },
         gender:{ type: String, required: true },
-        dob:Date,
+        dob:String,
         licenseNumber:{type:String,required:true,unique:true},
         license:String
     },
@@ -55,6 +55,13 @@ const MedicalsSchema = new Schema({
 },{timestamps:true})
 
 
+MedicalsSchema.methods.toJson = function(){
+    const user = this
+    const userObject = user.toObject()
+    delete userObject.password
+    delete userObject.token
+    return userObject
+}
 
 MedicalsSchema.pre('save',async function(next){
     const medical = this;

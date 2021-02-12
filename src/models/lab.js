@@ -89,6 +89,15 @@ LabsSchema.pre('save',async function(next){
   }
   next();
 })
+
+LabsSchema.methods.toJson = function(){
+  const user = this
+  const userObject = user.toObject()
+  delete userObject.password
+  delete userObject.token
+  return userObject
+}
+
 const Lab = mongoose.model("lab", LabsSchema);
 module.exports = Lab;
 
