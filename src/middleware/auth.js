@@ -80,6 +80,9 @@ const auth = async (req, res, next) => {
         if (!user) {
             throw new Error("User Not Found");
         }
+        if(first != "P" && user.approved === false){
+            throw new Error("User is not Approved !!!")
+        }
         req.token = token;
         req.user = user;
         // console.log(req.patient);
