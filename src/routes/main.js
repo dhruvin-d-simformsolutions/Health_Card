@@ -1,4 +1,6 @@
 const express = require("express");
+const generator = require('generate-password');
+const bcrypt = require('bcryptjs');
 const Patient = require("../models/patient");
 const Medical = require("../models/medical");
 const Lab = require("../models/lab");
@@ -37,10 +39,6 @@ router.post("/signup", async (req, res) => {
         throw new Error("Invalid UserName !!!");
     }
     const token = await globaltokengenerator(user);
-    console.log({
-      user,
-      token,
-    });
     res.status(201).send({
       user,
       token,
@@ -84,4 +82,50 @@ router.get('/getprofile',auth,async (req,res)=>{
   }
 })
 
+
+router.post('/forgetpassword',async (req,res) => {
+  try {
+    const {email,role} = req.body
+    // console.log(email,role[0]);
+    let userObject;
+    switch (role[0]) {
+      case "P":
+        userObject = await Patient.findOne({ "contacts.email" : email })
+        break;
+      case "D":
+        userObject = await Doctor.findOne({ "contacts.email" : email })
+        break;
+      case "L":
+        userObject = await Lab.findOne({ "contacts.email" : email })
+        // console.log(userObject);
+        break;
+      case "M":
+        userObject = await Medical.findOne({ "contacts.email" : email })
+        break;
+      default:
+        throw new Error("Invalid UserName !!!");
+    }
+    
+    if(!userObject){
+      throw new Error("Email Dose Not Found!!!")
+    }
+    // $2a$08$c1NYXIo3U.C/MPPmjVkkheiXeMKq/mCwGCjhlsIVKmdj2h6ErVlwi = 123456789
+    
+    const temporaryPassword = generator.generate({
+      length: 10,
+      numbers: true,
+      lowercase:true,
+      uppercase:true,
+    });
+    //TODO : Sending Email to User with temporary password
+    
+    userObject.password = await bcrypt.hash(temporaryPassword,8);
+    console.log(temporaryPassword,userObject.password);
+    // await userObject.save()
+    res.send(userObject)
+   
+  } catch (e) {
+    res.status(500).send(e.message)
+  }
+})
 module.exports = router;

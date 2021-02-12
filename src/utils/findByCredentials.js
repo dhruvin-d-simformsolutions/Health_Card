@@ -2,7 +2,7 @@ const Patient = require("../models/patient");
 const Medical = require("../models/medical");
 const Lab = require("../models/lab");
 const Doctor = require("../models/doctor");
-const bcrypt = require('bcryptjs');
+const {Comparepassword} = require('../utils/encrypation');
 
 findByCredentials = async (username,password) => {
 
@@ -28,7 +28,7 @@ findByCredentials = async (username,password) => {
     if(first != "P" && user.approved === false){
         throw new Error("User is not Approved !!!")
     }
-    isverify = await bcrypt.compare(password,user.password)
+    isverify = await Comparepassword(password,user.password)
     if(!isverify){
         throw new Error('Username and password does not match !!!');
     }

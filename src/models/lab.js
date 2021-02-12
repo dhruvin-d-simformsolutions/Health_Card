@@ -84,13 +84,13 @@ const LabsSchema = new Schema({
 
 LabsSchema.pre('save',async function(next){
   const lab = this;
-  if(lab.isModified('password')){
-      lab.password = await bcrypt.hash(lab.password,8);
-  }
+    if(lab.isModified('password')){
+        lab.password = await Encryptpassword(lab.password);
+    }
   next();
 })
 
-LabsSchema.methods.toJson = function(){
+LabsSchema.methods.toJSON = function(){
   const user = this
   const userObject = user.toObject()
   delete userObject.password

@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-const {Schema} = require('mongoose');
 const bcrypt = require('bcryptjs');
+const {Schema} = require('mongoose');
+const { Encryptpassword } = require('../utils/encrypation');
 
 
 var PatientSchema = new Schema({
@@ -120,7 +121,7 @@ PatientSchema.virtual('histories',{
 })
 
 
-PatientSchema.methods.toJson = function(){
+PatientSchema.methods.toJSON = function(){
     const user = this
     const userObject = user.toObject()
     delete userObject.password
@@ -131,10 +132,9 @@ PatientSchema.methods.toJson = function(){
 PatientSchema.pre('save',async function(next){
     const patient = this;
     if(patient.isModified('password')){
-        patient.password = await bcrypt.hash(patient.password,8);
+        patient.password = await Encryptpassword(patient.password);
     }
     next();
 })
-
 const Patient = mongoose.model('patient', PatientSchema);
 module.exports = Patient;
