@@ -55,6 +55,13 @@ const MedicalsSchema = new Schema({
 },{timestamps:true})
 
 
+MedicalsSchema.methods.toJson = function(){
+    const user = this
+    const userObject = user.toObject()
+    delete userObject.password
+    delete userObject.token
+    return userObject
+}
 
 MedicalsSchema.pre('save',async function(next){
     const medical = this;
