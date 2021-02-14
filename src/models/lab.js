@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require('validator');
+const {Encryptpassword} = require('../utils/encrypation');
 const {
   Schema
 } = require("mongoose");
@@ -73,7 +74,10 @@ const LabsSchema = new Schema({
       required: true
     },
   },
-  approved: Boolean,
+  approved: {
+    type : Boolean,
+    default : false
+  },
   token: {
     type: String,
   },

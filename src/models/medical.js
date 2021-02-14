@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const {Schema} = require('mongoose');
 const validator = require('validator');
-const bcrypt = require('bcryptjs');
+const {Encryptpassword} = require('../utils/encrypation');
 
 const MedicalsSchema = new Schema({
     medicalid:{ type: String, required: true },
@@ -47,7 +47,10 @@ const MedicalsSchema = new Schema({
         medicalname:String,       
         medicalmobile:{type:Number,required:true}   
     },
-    approved: Boolean,
+    approved: {
+        type : Boolean,
+        default : false,
+    },
     token: {
         type: String,
     },

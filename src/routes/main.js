@@ -1,6 +1,7 @@
 const express = require("express");
 const generator = require('generate-password');
 const bcrypt = require('bcryptjs');
+const sgMail = require('@sendgrid/mail')
 const Patient = require("../models/patient");
 const Medical = require("../models/medical");
 const Lab = require("../models/lab");
@@ -8,6 +9,7 @@ const Doctor = require("../models/doctor");
 const { auth } = require("../middleware/auth");
 const { findByCredentials } = require("../utils/findByCredentials");
 const { globaltokengenerator } = require("../utils/generatetoken");
+const {Encryptpassword} = require("../utils/encrypation");
 
 const router = new express.Router();
 
@@ -85,22 +87,23 @@ router.get('/getprofile',auth,async (req,res)=>{
 
 router.post('/forgetpassword',async (req,res) => {
   try {
-    const {email,role} = req.body
+    const {id} = req.body
     // console.log(email,role[0]);
     let userObject;
-    switch (role[0]) {
+    switch (id[0]) {
       case "P":
-        userObject = await Patient.findOne({ "contacts.email" : email })
+        // userObject = await Patient.findOne({ "contacts.email" : email })
+        userObject = await Patient.findOne({ healthid: id })
         break;
       case "D":
-        userObject = await Doctor.findOne({ "contacts.email" : email })
+        userObject = await Doctor.findOne({ doctorid: id })
         break;
       case "L":
-        userObject = await Lab.findOne({ "contacts.email" : email })
+        userObject = await Lab.findOne({ labid :id })
         // console.log(userObject);
         break;
       case "M":
-        userObject = await Medical.findOne({ "contacts.email" : email })
+        userObject = await Medical.findOne({ medicalid: id })
         break;
       default:
         throw new Error("Invalid UserName !!!");
@@ -119,13 +122,48 @@ router.post('/forgetpassword',async (req,res) => {
     });
     //TODO : Sending Email to User with temporary password
     
-    userObject.password = await bcrypt.hash(temporaryPassword,8);
-    console.log(temporaryPassword,userObject.password);
-    // await userObject.save()
+    userObject.password = await Encryptpassword(temporaryPassword);
+    // console.log(temporaryPassword,userObject.password);
+    await mailsent();
+    await userObject.save()
     res.send(userObject)
    
   } catch (e) {
     res.status(500).send(e.message)
   }
 })
+
+
+
+
+// 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
+// echo "export SENDGRID_API_KEY='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'" > sendgrid.env
+// echo "sendgrid.env" >> .gitignore
+// source ./sendgrid.env
+
+
+// const mailsent =  () =>{
+//   // try{
+//     sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+//     const msg = {
+//       to: 'dhruvin15720@gmail.com', // Change to your recipient
+//       from: 'vbs1765@gmail.com', // Change to your verified sender
+//       subject: 'Sending with SendGrid is Fun',
+//       text: 'and easy to do anywhere, even with Node.js',
+//       html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+//     }
+//     sgMail
+//       .send(msg)
+//       .then(() => {
+//         console.log('Email sent')
+//       })
+//       .catch((error) => {
+//         console.error(error)
+//       })
+// }
+
+
+
+
 module.exports = router;
+// Cannot read property '0' of undefined
