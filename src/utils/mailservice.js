@@ -40,7 +40,7 @@ const mailservice = (usermail,message) => {
     });
 
     var mailOptions = {
-            from: 'sgh000437@gmail.com',
+            from: process.env.EMAIL,
             to: usermail,
             html:message
     };
