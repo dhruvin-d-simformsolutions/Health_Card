@@ -16,4 +16,18 @@ router.get('/FetchPatient',auth,async(req,res)=>{
     res.status(500).send(e.message)
   }
 })
+
+router.patch('/updateprofile',auth,async (req,res) => {
+  
+    try{
+      
+      // req.user = req.body;
+      await req.user.save();
+      res.status(200).send(req.user);
+    }catch(err){
+      res.status(500).send(err.message);
+    }
+})
+
+
 module.exports = router;

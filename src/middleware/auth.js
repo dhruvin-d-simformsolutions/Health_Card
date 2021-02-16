@@ -9,11 +9,11 @@ const auth = async (req, res, next) => {
         const token = req.header("Authorization").replace("Bearer ", "");
         // console.log(token);
         const decoded = jwt.verify(token, process.env.SECRETKEYFORJWT);
-        console.log(
-            "-----------------",
-            decoded._id,
-            "---------------------------"
-        );
+        // console.log(
+        //     "-----------------",
+        //     decoded._id,
+        //     "---------------------------"
+        // );
         let first = decoded._id[0];
         let user;
         switch (first) {

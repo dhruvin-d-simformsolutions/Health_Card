@@ -5,7 +5,7 @@ require('./db/mongoose')
 const port = process.env.PORT;
 
 //Routers
-const IndexRouter = require('./routes/main');
+const IndeRouter = require('./routes/main');
 const PatientRouter = require('./routes/patient');
 const LabRouter = require('./routes/lab');
 const HistoryRouter = require('./routes/history');
@@ -15,7 +15,7 @@ const app = express();
 app.use(express.json())
 
 
-app.use('',IndexRouter);
+app.use('',IndeRouter);
 app.use('/patient', PatientRouter);
 app.use('/lab',LabRouter)
 app.use('/history',HistoryRouter);  
