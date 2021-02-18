@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const {Schema} = require('mongoose');
 const validator = require('validator');
-const {Encryptpassword} = require('../utils/encrypation');
+const {encryptPassword} = require('../utils/encrypation');
 
 const DoctorsSchema = new Schema({
     doctorid: {
@@ -102,7 +102,7 @@ DoctorsSchema.methods.toJSON = function(){
 DoctorsSchema.pre('save',async function(next){
     const doctor = this;
     if(doctor.isModified('password')){
-        doctor.password = await Encryptpassword(doctor.password);
+        doctor.password = await encryptPassword(doctor.password);
     }
     next();
 })
