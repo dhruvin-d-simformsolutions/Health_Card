@@ -2,7 +2,7 @@ const express = require('express');
 const Medical = require("../models/medical");
 const Doctor = require('../models/doctor');
 const Lab = require("../models/lab");
-const { mailadminappoved } = require('../utils/mailservice');
+const { mailadminappoved } = require('../utils/mailService');
 const router = new express.Router();
 
 

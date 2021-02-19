@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require('validator');
-const {Encryptpassword} = require('../utils/encrypation');
+const {encryptPassword} = require('../utils/encrypation');
 const {
   Schema
 } = require("mongoose");
@@ -89,7 +89,7 @@ const LabsSchema = new Schema({
 LabsSchema.pre('save',async function(next){
   const lab = this;
     if(lab.isModified('password')){
-        lab.password = await Encryptpassword(lab.password);
+        lab.password = await encryptPassword(lab.password);
     }
   next();
 })

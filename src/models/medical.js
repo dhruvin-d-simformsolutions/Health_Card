@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const {Schema} = require('mongoose');
 const validator = require('validator');
-const {Encryptpassword} = require('../utils/encrypation');
+const {encryptPassword} = require('../utils/encrypation');
 
 const MedicalsSchema = new Schema({
     medicalid:{ type: String, required: true },
@@ -69,7 +69,7 @@ MedicalsSchema.methods.toJSON = function(){
 MedicalsSchema.pre('save',async function(next){
     const medical = this;
     if(medical.isModified('password')){
-        medical.password = await Encryptpassword(medical.password);
+        medical.password = await encryptPassword(medical.password);
     }
     next();
 })

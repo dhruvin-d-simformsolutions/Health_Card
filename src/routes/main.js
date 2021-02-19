@@ -1,16 +1,15 @@
 const express = require("express");
 const generator = require('generate-password');
-const bcrypt = require('bcryptjs');
 const Patient = require("../models/patient");
 const Medical = require("../models/medical");
 const Lab = require("../models/lab");
 const Doctor = require("../models/doctor");
 const { auth } = require("../middleware/auth");
 const { findByCredentials } = require("../utils/findByCredentials");
-const { globaltokengenerator } = require("../utils/generatetoken");
+const { globalTokenGenerator } = require("../utils/generateToken");
 const {Encryptpassword} = require("../utils/encrypation");
-const {mailservice} = require('../utils/mailservice');
-const {mailRegistration,mailforgetpassword} = require('../utils/mailservice');
+// const {mailservice} = require('../utils/mailService');
+const {mailRegistration,mailforgetpassword} = require('../utils/mailService');
 
 const router = new express.Router();
 
@@ -46,7 +45,7 @@ router.post("/signup", async (req, res) => {
       default:
         throw new Error("Invalid UserName !!!");
     }
-    const token = await globaltokengenerator(user);
+    const token = await globalTokenGenerator(user);
     // mailservice(user.)
     res.status(201).send({
       user,
@@ -61,7 +60,7 @@ router.post("/login", async (req, res) => {
   try {
     const user = await findByCredentials(req.body.username, req.body.password);
     // const patient = await Patient.findByCredentials(req.body.healthid,req.body.password);
-    const token = await globaltokengenerator(user);
+    const token = await globalTokenGenerator(user);
     // console.log({user,token});
     res.status(200).send({
       user,

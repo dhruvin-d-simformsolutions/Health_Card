@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-globaltokengenerator = async function(user){
+globalTokenGenerator = async function(user){
 
     id = user.healthid || user.labid ||user.medicalid || user.doctorid;
     // const generatedtoken = jwt.sign({ _id: user._id.toString() }, process.env.SECRETKEYFORJWT);
@@ -11,5 +11,5 @@ globaltokengenerator = async function(user){
     return generatedtoken
 }
 module.exports = {
-    globaltokengenerator,
+    globalTokenGenerator,
 }

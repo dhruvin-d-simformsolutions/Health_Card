@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const {Schema} = require('mongoose');
-const { Encryptpassword } = require('../utils/encrypation');
+const { encryptPassword } = require('../utils/encrypation');
 
 
 var PatientSchema = new Schema({
@@ -132,7 +132,7 @@ PatientSchema.methods.toJSON = function(){
 PatientSchema.pre('save',async function(next){
     const patient = this;
     if(patient.isModified('password')){
-        patient.password = await Encryptpassword(patient.password);
+        patient.password = await encryptPassword(patient.password);
     }
     next();
 })

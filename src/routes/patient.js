@@ -18,12 +18,18 @@ router.get('/FetchPatient',auth,async(req,res)=>{
 })
 
 router.patch('/updateprofile',auth,async (req,res) => {
-  
+  // TODO : Seeking help for user update from a mentor
     try{
-      
-      // req.user = req.body;
-      await req.user.save();
-      res.status(200).send(req.user);
+      // console.log(req.user);
+      const user = await Patient.findByIdAndUpdate({_id : req.user._id},{$set : {
+        contacts: {
+          mobile : req.body.contacts.mobile || req.user.contacts.mobile,
+          email : req.body.contacts.email || req.user.contacts.email
+        }
+      }},() => {
+        console.log("Successfully Updated");
+      })
+      res.status(200).send("Updated Successfully");
     }catch(err){
       res.status(500).send(err.message);
     }
