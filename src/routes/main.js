@@ -153,4 +153,30 @@ router.post('/forgetpassword',async (req,res) => {
 })
 
 
+const multer = require('multer');
+const pdf = multer({
+    limits : {
+        fileSize : 5000000,
+    },
+    fileFilter(req,file,cb){
+        if(!file.originalname.match(/\.(pdf)$/)){
+            return cb(new Error("Please upload a file with Extension pdf"))
+        }
+        cb(undefined,true);
+    },
+})
+
+router.post('/uploadPDF',auth,pdf.single('pdf'),async (req,res)=>{
+    if(req.identity == 'D'){
+      req.user.details.license = req.file.buffer
+    }
+    else{
+      req.user.ownerdetails.license = req.file.buffer
+    }
+    await req.user.save()
+    res.send()
+},(error,req,res,next)=>{
+  res.status(400).send({error : error.message})
+})
+
 module.exports = router;

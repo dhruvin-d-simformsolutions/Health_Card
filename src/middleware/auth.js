@@ -50,6 +50,7 @@ const auth = async (req, res, next) => {
         if(first != "P" && user.approved === false){
             throw new Error("User is not Approved !!!")
         }
+        req.identity = first
         req.token = token;
         req.user = user;
         next();
