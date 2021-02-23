@@ -10,5 +10,4 @@ As we don’t have any centralize database of individual person, it is nearly im
 ## Run this project
   - First of all you need to install all npm packages,
   - Command for that : npm install
-  - After that run this command to start the server
-  - npm run dev
+  - After that run this command to start the server : npm run dev
