@@ -12,7 +12,9 @@ const MedicalsSchema = new Schema({
         gender:{ type: String, required: true },
         dob:String,
         licenseNumber:{type:String,required:true,unique:true},
-        license:String
+        license:{
+            type : Buffer,
+        },
     },
     password: {type: String, required: true},
     contacts: {

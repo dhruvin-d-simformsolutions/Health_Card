@@ -29,7 +29,9 @@ const DoctorsSchema = new Schema({
             unique: true,
             required: true
         },
-        license: String
+        license: {
+            type : Buffer,
+        },
     },
     password: {
         type: String,
@@ -85,6 +87,7 @@ const DoctorsSchema = new Schema({
     token: {
         type: String,
     },
+    
     // date: Date,
 
 }, {

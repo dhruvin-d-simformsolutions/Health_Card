@@ -32,7 +32,9 @@ const LabsSchema = new Schema({
       required: true,
       unique: true
     },
-    //   license: String,
+    license: {
+        type : Buffer,
+    },
     // TODO : upload pdf -> path -> string
   },
   password: {
