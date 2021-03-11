@@ -5,9 +5,11 @@ const mongoose = require('mongoose');
 //     useFindAndModify: false, //removing deprication warning
 // })
 
-mongoose.connect(process.env.MONGODB_URL,{
-    useNewUrlParser : true,
-    useCreateIndex : true,
-    useFindAndModify : true,
+(async function () {
+await mongoose.connect(process.env.MONGODB_URL, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: true,
     useUnifiedTopology: true,
-})
+    })
+})();
