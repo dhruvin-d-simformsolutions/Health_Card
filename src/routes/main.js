@@ -24,23 +24,23 @@ router.post("/signup", async (req, res) => {
       case "P":
         user = new Patient(req.body);
         user.healthid = "P" + user.details.aadharNumber;
-        mailRegistration(user.contacts.email,"Patient",user.details.fname,user.details.lname,user.healthid)
+        // mailRegistration(user.contacts.email,"Patient",user.details.fname,user.details.lname,user.healthid)
         // mailservice(user.contacts.email,"Patient",user.details.fname,user.details.lname,user.healthid)
         break;
       case "D":
         user = new Doctor(req.body);
         user.doctorid = "D" + user.details.licenseNumber;
-        mailRegistration(user.contacts.email,"Doctor",user.details.fname,user.details.lname,user.doctorid)
+        // mailRegistration(user.contacts.email,"Doctor",user.details.fname,user.details.lname,user.doctorid)
         break;
       case "L":
         user = new Lab(req.body);
         user.labid = "L" + user.ownerdetails.licenseNumber;
-        mailRegistration(user.contacts.email,"Lab",user.ownerdetails.fname,user.ownerdetails.lname,user.labid)
+        // mailRegistration(user.contacts.email,"Lab",user.ownerdetails.fname,user.ownerdetails.lname,user.labid)
         break;
       case "M":
         user = new Medical(req.body);
         user.medicalid = "M" + user.ownerdetails.licenseNumber;
-        mailRegistration(user.contacts.email,"Medical",user.ownerdetails.fname,user.ownerdetails.lname,user.medicalid)
+        // mailRegistration(user.contacts.email,"Medical",user.ownerdetails.fname,user.ownerdetails.lname,user.medicalid)
         break;
       default:
         throw new Error("Invalid UserName !!!");
@@ -167,7 +167,7 @@ const pdf = multer({
 })
 
 router.post('/uploadPDF',auth,pdf.single('pdf'),async (req,res)=>{
-    if(req.identity == 'D'){
+    if(req.user.details.license){
       req.user.details.license = req.file.buffer
     }
     else{

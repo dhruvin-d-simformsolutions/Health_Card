@@ -16,6 +16,7 @@ const PrescripationSchema = new Schema({
         doctorid: String,
         lab: {
             reportname: String,
+            report: Buffer,
         },
 }, {
     timestamps: true
