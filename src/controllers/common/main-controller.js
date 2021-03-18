@@ -83,10 +83,14 @@ exports.Login = async (req, res) => {
 
 exports.Logout = async (req, res) => {
   try {
+    req.session.destroy((err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
     req.user.token = undefined
     await req.user.save();
     res.send("Logout Successful")
-
   } catch (e) {
     res.status(500).send(e.message)
   }

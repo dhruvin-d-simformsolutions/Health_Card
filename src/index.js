@@ -26,7 +26,7 @@ const storeToDatabase = new MongoDBStore({
 })
 
 app.use(session({
-    secret : "secret",
+    secret : process.env.SECRETKEYFORSESSION,
     resave : false,
     saveUninitialized : false,
     store : storeToDatabase,

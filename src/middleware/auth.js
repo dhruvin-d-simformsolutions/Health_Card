@@ -9,6 +9,7 @@ const auth = async (req, res, next) => {
         const token = req.header("Authorization").replace("Bearer ", "");
         const decoded = jwt.verify(token, process.env.SECRETKEYFORJWT);
         let first = decoded._id[0];
+        console.log(first);
         let user;
         switch (first) {
             case "P":
