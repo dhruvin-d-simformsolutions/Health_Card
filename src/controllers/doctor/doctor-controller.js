@@ -1,0 +1,1 @@
+const doctor = require('../../models/doctor');

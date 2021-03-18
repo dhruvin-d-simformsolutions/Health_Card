@@ -7,13 +7,7 @@ const Doctor = require("../models/doctor");
 const auth = async (req, res, next) => {
     try {
         const token = req.header("Authorization").replace("Bearer ", "");
-        // console.log(token);
         const decoded = jwt.verify(token, process.env.SECRETKEYFORJWT);
-        // console.log(
-        //     "-----------------",
-        //     decoded._id,
-        //     "---------------------------"
-        // );
         let first = decoded._id[0];
         let user;
         switch (first) {
@@ -58,7 +52,6 @@ const auth = async (req, res, next) => {
         res.status(401).send(e.message);
     }
 };
-
 module.exports = {
     auth,
 };
