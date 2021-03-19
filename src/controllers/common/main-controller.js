@@ -3,7 +3,7 @@ const Medical = require("../../models/medical");
 const Lab = require("../../models/lab");
 const Doctor = require("../../models/doctor");
 
-const { loginSchema,signUpSchema } = require("../../validation/loginSchema");
+const { loginSchema,signUpSchema } = require("../../validation/JoiValidationSchemas");
 // var csrf = require('csurf')
 const { findByCredentials } = require("../../utils/findByCredentials");
 const { globalTokenGenerator } = require("../../utils/generateToken");
