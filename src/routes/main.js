@@ -1,19 +1,24 @@
 const express = require("express");
-const generator = require('generate-password');
+const bodyParser = require('body-parser');
+const csrf = require('csurf');
 const { auth } = require("../middleware/auth");
-const MainController = require('../controllers/common/main-controller');
+// const {mailservice} = require('../utils/mailService');
+const {mailRegistration,mailforgetpassword} = require('../utils/mailService');
+const mainController = require('../controllers/common/main-controller');
 
 const router = new express.Router();
 
-router.post("/signup",MainController.SingUp);
 
-router.post("/login", MainController.Login);
+router.post("/signup", mainController.SingUp);
 
-router.post("/logout",auth,MainController.Logout)
+router.post("/login",mainController.Login);
 
-router.get('/getprofile',auth,MainController.GetProfile)
+router.post("/logout",auth,mainController.Logout)
 
-router.post('/forgetpassword',MainController.ForgetPassword)
+router.get('/getprofile',auth,mainController.GetProfile)
+
+router.post('/forgetpassword',auth,mainController.ForgetPassword)
+
 
 const multer = require('multer');
 const pdf = multer({
@@ -28,6 +33,6 @@ const pdf = multer({
     },
 })
 
-router.post('/uploadPDF',auth,pdf.single('pdf'),MainController.UploadPDF)
+router.post('/uploadPDF',auth,pdf.single('pdf'),mainController.UploadPDF)
 
 module.exports = router;

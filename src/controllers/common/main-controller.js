@@ -2,25 +2,18 @@ const Patient = require("../../models/patient");
 const Medical = require("../../models/medical");
 const Lab = require("../../models/lab");
 const Doctor = require("../../models/doctor");
-const {
-  findByCredentials
-} = require("../../utils/findByCredentials");
-const {
-  globalTokenGenerator
-} = require("../../utils/generateToken");
-const {
-  Encryptpassword
-} = require("../../utils/encrypation");
+
+const { loginSchema,signUpSchema } = require("../../validation/loginSchema");
+// var csrf = require('csurf')
+const { findByCredentials } = require("../../utils/findByCredentials");
+const { globalTokenGenerator } = require("../../utils/generateToken");
+const { Encryptpassword } = require("../../utils/encrypation");
 // const {mailservice} = require('../utils/mailService');
-const {
-  mailRegistration,
-  mailforgetpassword
-} = require('../../utils/mailService');
+const { mailRegistration, mailforgetpassword } = require("../../utils/mailService");
 
 exports.SingUp = async (req, res) => {
-  // const patient = new Patient(req.body)
-  // console.log(user);
   try {
+    const validation = await signUpSchema.validateAsync(req.body)
     const first = req.body.changebit[0]; //TODO:P,D,L,M
     let user;
     switch (first) {
@@ -57,12 +50,13 @@ exports.SingUp = async (req, res) => {
   } catch (err) {
     res.status(400).send(err.message);
   }
-}
+};
 
 exports.Login = async (req, res) => {
   try {
+    const validation = await loginSchema.validateAsync(req.body);
+    console.log(result);
     const user = await findByCredentials(req.body.username, req.body.password);
-    // const patient = await Patient.findByCredentials(req.body.healthid,req.body.password);
     req.session.isLoggedIn = true;
     req.session.user = user;
     req.session.save((err) => {
@@ -77,9 +71,9 @@ exports.Login = async (req, res) => {
       token,
     });
   } catch (err) {
-    res.send(err.message);
+    res.status(500).send(err.message);
   }
-}
+};
 
 exports.Logout = async (req, res) => {
   try {
@@ -88,13 +82,13 @@ exports.Logout = async (req, res) => {
         console.log(err);
       }
     });
-    req.user.token = undefined
+    req.user.token = undefined;
     await req.user.save();
-    res.send("Logout Successful")
+    res.send("Logout Successful");
   } catch (e) {
-    res.status(500).send(e.message)
+    res.status(500).send(e.message);
   }
-}
+};
 
 exports.GetProfile = async (req, res) => {
   try {
@@ -102,13 +96,11 @@ exports.GetProfile = async (req, res) => {
   } catch (err) {
     res.status(400).send(err.meassage);
   }
-}
+};
 
 exports.ForgetPassword = async (req, res) => {
   try {
-    const {
-      id
-    } = req.body;
+    const { id } = req.body;
     const temporaryPassword = generator.generate({
       length: 10,
       numbers: true,
@@ -121,35 +113,59 @@ exports.ForgetPassword = async (req, res) => {
       case "P":
         // userObject = await Patient.findOne({ "contacts.email" : email })
         userObject = await Patient.findOne({
-          healthid: id
+          healthid: id,
         });
         if (userObject) {
-          mailforgetpassword(userObject.contacts.email, userObject.details.fname, userObject.details.lname, userObject.healthid, temporaryPassword);
+          mailforgetpassword(
+            userObject.contacts.email,
+            userObject.details.fname,
+            userObject.details.lname,
+            userObject.healthid,
+            temporaryPassword
+          );
         }
         break;
       case "D":
         userObject = await Doctor.findOne({
-          doctorid: id
+          doctorid: id,
         });
         if (userObject) {
-          mailforgetpassword(userObject.contacts.email, userObject.details.fname, userObject.details.lname, userObject.doctorid, temporaryPassword);
+          mailforgetpassword(
+            userObject.contacts.email,
+            userObject.details.fname,
+            userObject.details.lname,
+            userObject.doctorid,
+            temporaryPassword
+          );
         }
         break;
       case "L":
         userObject = await Lab.findOne({
-          labid: id
+          labid: id,
         });
         if (userObject) {
-          mailforgetpassword(userObject.contacts.email, userObject.ownerdetails.fname, userObject.ownerdetails.lname, userObject.labid, temporaryPassword);
+          mailforgetpassword(
+            userObject.contacts.email,
+            userObject.ownerdetails.fname,
+            userObject.ownerdetails.lname,
+            userObject.labid,
+            temporaryPassword
+          );
         }
         // console.log(userObject);
         break;
       case "M":
         userObject = await Medical.findOne({
-          medicalid: id
+          medicalid: id,
         });
         if (userObject) {
-          mailforgetpassword(userObject.contacts.email, userObject.ownerdetails.fname, userObject.ownerdetails.lname, userObject.medicalid, temporaryPassword);
+          mailforgetpassword(
+            userObject.contacts.email,
+            userObject.ownerdetails.fname,
+            userObject.ownerdetails.lname,
+            userObject.medicalid,
+            temporaryPassword
+          );
         }
         break;
       default:
@@ -157,34 +173,33 @@ exports.ForgetPassword = async (req, res) => {
     }
 
     if (!userObject) {
-      throw new Error("Email Dose Not Found!!!")
+      throw new Error("Email Dose Not Found!!!");
     }
     // $2a$08$c1NYXIo3U.C/MPPmjVkkheiXeMKq/mCwGCjhlsIVKmdj2h6ErVlwi = 123456789
-
 
     //TODO : Sending Email to User with temporary password
 
     userObject.password = await Encryptpassword(temporaryPassword);
     // console.log(temporaryPassword,userObject.password);
     // mailsent();
-    await userObject.save()
-    res.send(userObject)
-
+    await userObject.save();
+    res.send(userObject);
   } catch (e) {
-    res.status(500).send(e.message)
+    res.status(500).send(e.message);
   }
-}
+};
 
-exports.UploadPDF = async (req, res) => {
+(exports.UploadPDF = async (req, res) => {
   if (req.user.details.license) {
-    req.user.details.license = req.file.buffer
+    req.user.details.license = req.file.buffer;
   } else {
-    req.user.ownerdetails.license = req.file.buffer
+    req.user.ownerdetails.license = req.file.buffer;
   }
-  await req.user.save()
-  res.send()
-}, (error, req, res, next) => {
-  res.status(400).send({
-    error: error.message
-  })
-}
+  await req.user.save();
+  res.send();
+}),
+  (error, req, res, next) => {
+    res.status(400).send({
+      error: error.message,
+    });
+  };
