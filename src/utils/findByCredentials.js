@@ -4,7 +4,7 @@ const Lab = require("../models/lab");
 const Doctor = require("../models/doctor");
 const {comparePassword} = require('../utils/encrypation');
 
-findByCredentials = async (username,password) => {
+exports.findByCredentials = async (username,password) => {
 
     const first = username[0];
     let user;
@@ -35,6 +35,39 @@ findByCredentials = async (username,password) => {
     return user;
 }
 
-module.exports = {
-    findByCredentials,
-}
+
+// {
+//     "changebit" : "P",
+//     "details" : {
+//         "fname" : "Hansa",
+//         "lname" : "Dankhara",
+//         "gender" : "male",
+//         "dob" : "15/07/2000",
+//         "aadharNumber" : 123456789013
+//     },
+//     "contacts" : {
+//         "mobile" : 8200748635,
+//         "email" : "dhruvin15720@gmail.com"
+//     },
+//     "emergencyContacts": {
+//         "name": "Lalitbhai",
+//         "mobile": 9979852034,
+//         "relation": "father"
+//     },
+//     "address" : {
+//         "addressLine1": "sdfg",
+//         "addressLine2": "qwer",
+//         "city": "Surat",
+//         "state": "Gujarat",
+//         "pincode": 394101
+//     },
+//     "bodyDetails" : {
+//         "weight" : 50,
+//         "height" : 163,
+//         "alergies" : [
+//             "asdfg","sdfgh","xyz"
+//         ],
+//         "bloodGroup" : "AB+"
+//     },
+//     "password" : "123456789"
+// }
