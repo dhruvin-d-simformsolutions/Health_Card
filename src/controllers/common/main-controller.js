@@ -4,12 +4,12 @@ const Lab = require("../../models/lab");
 const Doctor = require("../../models/doctor");
 
 const { loginSchema,signUpSchema } = require("../../validation/JoiValidationSchemas");
-// var csrf = require('csurf')
 const { findByCredentials } = require("../../utils/findByCredentials");
 const { globalTokenGenerator } = require("../../utils/generateToken");
 const { Encryptpassword } = require("../../utils/encrypation");
 // const {mailservice} = require('../utils/mailService');
 const { mailRegistration, mailforgetpassword } = require("../../utils/mailService");
+const passport = require("passport");
 
 exports.SingUp = async (req, res) => {
   try {
@@ -52,31 +52,47 @@ exports.SingUp = async (req, res) => {
   }
 };
 
-exports.Login = async (req, res) => {
+exports.Login = (req, res,next) => {
   try {
-    const validation = await loginSchema.validateAsync(req.body);
-    console.log(result);
-    const user = await findByCredentials(req.body.username, req.body.password);
-    req.session.isLoggedIn = true;
-    req.session.user = user;
-    req.session.save((err) => {
-      if (err) {
-        console.log(err);
+    // // Authentication with JWT
+    // const validation = await loginSchema.validateAsync(req.body);
+    // const user = await findByCredentials(req.body.username, req.body.password);
+    // req.session.isLoggedIn = true;
+    // req.session.user = user;
+    // req.session.save((err) => {
+    //   if (err) {
+    //     console.log(err);
+    //   }
+    // });
+    // const token = await globalTokenGenerator(user);
+    // // console.log({user,token});
+    // res.status(200).send({
+    //   user,
+    //   token,
+    // });
+    
+    //Authentication with passport Only
+    passport.authenticate('local',async (error, user, info)=>{
+      if (error) {
+        return next(error);
       }
-    });
-    const token = await globalTokenGenerator(user);
-    // console.log({user,token});
-    res.status(200).send({
-      user,
-      token,
-    });
+  
+      if (!user) {
+        return res.status(500).send(info.message);
+      }      
+      console.log(user);
+      const token = await globalTokenGenerator(user);
+      res.status(200).send({user,token})
+    })(req,res,next);
+    
   } catch (err) {
     res.status(500).send(err.message);
   }
 };
 
 exports.Logout = async (req, res) => {
-  try {
+  try {  
+  
     req.session.destroy((err) => {
       if (err) {
         console.log(err);

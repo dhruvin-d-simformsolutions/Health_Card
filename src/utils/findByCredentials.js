@@ -23,7 +23,7 @@ exports.findByCredentials = async (username,password) => {
 
     // const patient = await Patient.findOne({healthid});
     if(!user){
-        throw new Error("User is not Available");
+        throw new Error("User is not Register yet");
     }
     if(first != "P" && user.approved === false){
         throw new Error("User is not Approved !!!")
@@ -34,40 +34,3 @@ exports.findByCredentials = async (username,password) => {
     }
     return user;
 }
-
-
-// {
-//     "changebit" : "P",
-//     "details" : {
-//         "fname" : "Hansa",
-//         "lname" : "Dankhara",
-//         "gender" : "male",
-//         "dob" : "15/07/2000",
-//         "aadharNumber" : 123456789013
-//     },
-//     "contacts" : {
-//         "mobile" : 8200748635,
-//         "email" : "dhruvin15720@gmail.com"
-//     },
-//     "emergencyContacts": {
-//         "name": "Lalitbhai",
-//         "mobile": 9979852034,
-//         "relation": "father"
-//     },
-//     "address" : {
-//         "addressLine1": "sdfg",
-//         "addressLine2": "qwer",
-//         "city": "Surat",
-//         "state": "Gujarat",
-//         "pincode": 394101
-//     },
-//     "bodyDetails" : {
-//         "weight" : 50,
-//         "height" : 163,
-//         "alergies" : [
-//             "asdfg","sdfgh","xyz"
-//         ],
-//         "bloodGroup" : "AB+"
-//     },
-//     "password" : "123456789"
-// }

@@ -1,5 +1,6 @@
 const joi = require('@hapi/joi');
 
+//TODO : Making remaining JOI validation Schema 
 const loginSchema = joi.object({
     username: joi.string().required().min(13),
     password : joi.string().required()
