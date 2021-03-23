@@ -106,34 +106,3 @@ LabsSchema.methods.toJSON = function(){
 
 const Lab = mongoose.model("lab", LabsSchema);
 module.exports = Lab;
-
-/*
-{
-  "changebit" : "L"
-  "ownerdetails": {
-      "fname": "Dhruvin",
-      "mname": "Lalitbhai",
-      "lname": "Dankhara",
-      "gender": "Male",
-      "dob": "15/07/2000",
-      "licenseNumber": "1234567890",
-    },
-    "password": "123456789",
-    "contacts": {
-      "mobile": 9874563210,
-      "email": "123@gmail.com"
-    },
-    "address": {
-      "addressLine1": "String",
-      "addressLine2": "String",
-      "city": "Surat",
-      "state": "Gujarat",
-      pincode: 394101,
-    },
-    "laboratoryContacts": {
-      "labname": "Demo",
-      "labmobile": 7410369852,
-    },
-    "approved": false, 
-}
-*/

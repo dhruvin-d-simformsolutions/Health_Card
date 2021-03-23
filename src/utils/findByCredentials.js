@@ -4,7 +4,7 @@ const Lab = require("../models/lab");
 const Doctor = require("../models/doctor");
 const {comparePassword} = require('../utils/encrypation');
 
-exports.findByCredentials = async (username,password) => {
+exports.findByCredentials =  async (username,password) => {
 
     const first = username[0];
     let user;
@@ -30,7 +30,7 @@ exports.findByCredentials = async (username,password) => {
     }
     isverify = await comparePassword(password,user.password)
     if(!isverify){
-        throw new Error('Username and password does not match !!!');
+        throw new Error('Incorrect Password !!!');
     }
     return user;
 }

@@ -13,8 +13,8 @@ const passport = require("passport");
 
 exports.SingUp = async (req, res) => {
   try {
-    const validation = await signUpSchema.validateAsync(req.body)
-    const first = req.body.changebit[0]; //TODO:P,D,L,M
+    await signUpSchema.validateAsync(req.body)
+    const first = req.body.changebit[0]; 
     let user;
     switch (first) {
       case "P":
@@ -52,10 +52,13 @@ exports.SingUp = async (req, res) => {
   }
 };
 
-exports.Login = (req, res,next) => {
+exports.Login = async (req, res,next) => {
   try {
+    //JOI validation
+    await loginSchema.validateAsync(req.body);
+    
+    
     // // Authentication with JWT
-    // const validation = await loginSchema.validateAsync(req.body);
     // const user = await findByCredentials(req.body.username, req.body.password);
     // req.session.isLoggedIn = true;
     // req.session.user = user;
@@ -71,16 +74,16 @@ exports.Login = (req, res,next) => {
     //   token,
     // });
     
+    
     //Authentication with passport Only
     passport.authenticate('local',async (error, user, info)=>{
       if (error) {
         return next(error);
       }
-  
       if (!user) {
         return res.status(500).send(info.message);
       }      
-      console.log(user);
+      // console.log();
       const token = await globalTokenGenerator(user);
       res.status(200).send({user,token})
     })(req,res,next);

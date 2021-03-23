@@ -80,10 +80,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-//Body parser
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
 
 //CSRF DEMO
 // app.set('view engine', 'pug')

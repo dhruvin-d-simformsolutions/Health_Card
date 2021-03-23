@@ -9,6 +9,7 @@ globalTokenGenerator = async function(user){
     // console.log(user.token);
     try {
         await user.save();
+
     } catch (error) {
         throw new Error(error.message)
     }

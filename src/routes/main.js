@@ -8,7 +8,6 @@ const mainController = require('../controllers/common/main-controller');
 
 const router = new express.Router();
 
-
 router.post("/signup", mainController.SingUp);
 
 router.post("/login",mainController.Login);
