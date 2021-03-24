@@ -25,7 +25,7 @@ const auth = async (req, res, next) => {
                 break;
             case "L":
             case "M":
-                user = await GeneralMedicalAndLab.findOne({
+                user = await G  eneralMedicalAndLab.findOne({
                     uniqueid: decoded._id,
                     token: token,
                 });
