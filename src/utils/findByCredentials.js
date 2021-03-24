@@ -1,5 +1,4 @@
 const Patient = require("../models/patient");
-const Doctor = require("../models/doctor");
 const GeneralMedicalAndLab = require("../models/orgnization")
 const {
     comparePassword
