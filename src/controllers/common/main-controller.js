@@ -1,42 +1,41 @@
 const Patient = require("../../models/patient");
-const Medical = require("../../models/medical");
-const Lab = require("../../models/lab");
 const Doctor = require("../../models/doctor");
 
+const GeneralLabAndMedical = require("../../models/orgnization");
+
 const { loginSchema,signUpSchema } = require("../../validation/JoiValidationSchemas");
-// var csrf = require('csurf')
 const { findByCredentials } = require("../../utils/findByCredentials");
 const { globalTokenGenerator } = require("../../utils/generateToken");
 const { Encryptpassword } = require("../../utils/encrypation");
 // const {mailservice} = require('../utils/mailService');
 const { mailRegistration, mailforgetpassword } = require("../../utils/mailService");
+const passport = require("passport");
 
 exports.SingUp = async (req, res) => {
+
   try {
-    const validation = await signUpSchema.validateAsync(req.body)
-    const first = req.body.changebit[0]; //TODO:P,D,L,M
+  
+    const first = req.body.changebit[0]; 
+    // console.log(req.body.OrgnizationType[0]);
     let user;
     switch (first) {
       case "P":
         user = new Patient(req.body);
-        user.healthid = "P" + user.details.aadharNumber;
+        user.uniqueid = "P" + user.details.aadharNumber;
         // mailRegistration(user.contacts.email,"Patient",user.details.fname,user.details.lname,user.healthid)
         // mailservice(user.contacts.email,"Patient",user.details.fname,user.details.lname,user.healthid)
         break;
       case "D":
         user = new Doctor(req.body);
-        user.doctorid = "D" + user.details.licenseNumber;
+        user.uniqueid = "D" + user.licenseNumber;
         // mailRegistration(user.contacts.email,"Doctor",user.details.fname,user.details.lname,user.doctorid)
         break;
       case "L":
-        user = new Lab(req.body);
-        user.labid = "L" + user.ownerdetails.licenseNumber;
-        // mailRegistration(user.contacts.email,"Lab",user.ownerdetails.fname,user.ownerdetails.lname,user.labid)
-        break;
       case "M":
-        user = new Medical(req.body);
-        user.medicalid = "M" + user.ownerdetails.licenseNumber;
-        // mailRegistration(user.contacts.email,"Medical",user.ownerdetails.fname,user.ownerdetails.lname,user.medicalid)
+        user = new GeneralLabAndMedical(req.body);
+        console.log(user);
+        user.uniqueid = first + user.licenseNumber;
+        // mailRegistration(user.contacts.email,"Lab",user.ownerdetails.fname,user.ownerdetails.lname,user.labid)
         break;
       default:
         throw new Error("Invalid UserName !!!");
@@ -50,38 +49,61 @@ exports.SingUp = async (req, res) => {
   } catch (err) {
     res.status(400).send(err.message);
   }
+  
+  
+  
+  
+  
 };
 
-exports.Login = async (req, res) => {
+exports.Login = async (req, res,next) => {
   try {
-    const validation = await loginSchema.validateAsync(req.body);
-    console.log(result);
-    const user = await findByCredentials(req.body.username, req.body.password);
-    req.session.isLoggedIn = true;
-    req.session.user = user;
-    req.session.save((err) => {
-      if (err) {
-        console.log(err);
+    //JOI validation
+    await loginSchema.validateAsync(req.body);
+    
+    
+    // // Authentication with JWT
+    // const user = await findByCredentials(req.body.username, req.body.password);
+    // req.session.isLoggedIn = true;
+    // req.session.user = user;
+    // req.session.save((err) => {
+    //   if (err) {
+    //     console.log(err);
+    //   }
+    // });
+    // const token = await globalTokenGenerator(user);
+    // // console.log({user,token});
+    // res.status(200).send({
+    //   user,
+    //   token,
+    // });
+    
+    //Authentication with passport Only
+    passport.authenticate('local',async (error, user, info)=>{
+      if (error) {
+        return next(error);
       }
-    });
-    const token = await globalTokenGenerator(user);
-    // console.log({user,token});
-    res.status(200).send({
-      user,
-      token,
-    });
+      if (!user) {
+        return res.status(500).send(info.message);
+      }      
+      // console.log();
+      const token = await globalTokenGenerator(user);
+      res.status(200).send({user,token})
+    })(req,res,next);
+    
   } catch (err) {
     res.status(500).send(err.message);
   }
 };
 
 exports.Logout = async (req, res) => {
-  try {
-    req.session.destroy((err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
+  try {  
+  
+    // req.session.destroy((err) => {
+    //   if (err) {
+    //     console.log(err);
+    //   }
+    // });
     req.user.token = undefined;
     await req.user.save();
     res.send("Logout Successful");
@@ -139,13 +161,13 @@ exports.ForgetPassword = async (req, res) => {
           );
         }
         break;
-      case "L":
-        userObject = await Lab.findOne({
-          labid: id,
+      case "L" || "M":
+        userObject = await GeneralLabAndMedical.findOne({
+          Orgnizationid: id,
         });
         if (userObject) {
           mailforgetpassword(
-            userObject.contacts.email,
+            userObject.ownerdetails.contacts.email,
             userObject.ownerdetails.fname,
             userObject.ownerdetails.lname,
             userObject.labid,
@@ -153,20 +175,6 @@ exports.ForgetPassword = async (req, res) => {
           );
         }
         // console.log(userObject);
-        break;
-      case "M":
-        userObject = await Medical.findOne({
-          medicalid: id,
-        });
-        if (userObject) {
-          mailforgetpassword(
-            userObject.contacts.email,
-            userObject.ownerdetails.fname,
-            userObject.ownerdetails.lname,
-            userObject.medicalid,
-            temporaryPassword
-          );
-        }
         break;
       default:
         throw new Error("Invalid UserName !!!");
@@ -190,10 +198,10 @@ exports.ForgetPassword = async (req, res) => {
 };
 
 (exports.UploadPDF = async (req, res) => {
-  if (req.user.details.license) {
-    req.user.details.license = req.file.buffer;
+  if (req.user.license) {
+    req.user.license = req.file.buffer;
   } else {
-    req.user.ownerdetails.license = req.file.buffer;
+    req.user.license = req.file.buffer;
   }
   await req.user.save();
   res.send();

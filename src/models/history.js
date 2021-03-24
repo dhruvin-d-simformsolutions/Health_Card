@@ -13,7 +13,7 @@ const PrescripationSchema = new Schema({
             timedose: String,
             quantity: Number,
         }],
-        doctorid: String,
+        uniqueid: String,
         lab: {
             reportname: String,
             report: Buffer,
@@ -23,7 +23,7 @@ const PrescripationSchema = new Schema({
 })
 
 const HistorySchema = new Schema({
-    healthid:{
+    uniqueid:{
         type : String,
         required  :true,
         ref : 'Patient',

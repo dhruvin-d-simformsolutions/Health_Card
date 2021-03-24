@@ -4,9 +4,13 @@ const validator = require('validator');
 const {encryptPassword} = require('../utils/encrypation');
 
 const DoctorsSchema = new Schema({
-    doctorid: {
+    uniqueid: {
         type: String,
         required: true,
+    },
+    userRole : {
+        type : String,
+        default : "Doctor"
     },
     details: {
         fname: {
@@ -21,40 +25,42 @@ const DoctorsSchema = new Schema({
         gender: {
             type: String,
             required: true,
+            enum: ["Male", "Female"]
         },
         dob: String,
         //TODO :type change to DOB
-        licenseNumber: {
-            type: String,
-            unique: true,
-            required: true
+        contacts: {
+            mobile: {
+                type: Number,
+                required: true,
+            },
+            email: {
+                type: String,
+                required: true,
+                trim: true,
+                lowercase: true,
+                validate(value) {
+                if (!validator.isEmail(value)) {
+                    throw new Error("Email is invalid");
+                }
+                },
+            },
         },
-        license: {
-            type : Buffer,
-        },
+        
+    },
+    licenseNumber: {
+        type: String,
+        unique: true,
+        required: true
+    },
+    license: {
+        type : Buffer,
     },
     password: {
         type: String,
         required: true
     },
-    contacts: {
-        mobile: {
-            type: Number,
-            required: true,
-        },
-        email: {
-            type: String,
-            unique: true,
-            required: true,
-            trim: true,
-            lowercase: true,
-            validate(value) {
-            if (!validator.isEmail(value)) {
-                throw new Error("Email is invalid");
-            }
-            },
-        },
-    },
+    
     address: {
         addressLine1: String,
         addressLine2: String,
@@ -109,5 +115,5 @@ DoctorsSchema.pre('save',async function(next){
     }
     next();
 })
-const Doctor = mongoose.model('doctor', DoctorsSchema);
+const Doctor = mongoose.model('doctor', DoctorsSchema,"data");
 module.exports = Doctor;

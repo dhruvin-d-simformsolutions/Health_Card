@@ -6,15 +6,11 @@ const router = new express.Router();
 //Fetching Pending Doctors, Medicals ans Labs
 router.get('/pendingdoctors',adminControllers.PendingDoctors)
 
-router.get('/pendinglabs',adminControllers.PendingLabs)
-
-router.get('/pendingMedicals',adminControllers.PendingDoctors)
+router.get('/pendingOrgnizations',adminControllers.PendingOrgnization)
 
 //Either Approving or Rejection
 router.patch('/doctorapproved',adminControllers.DoctorApproved)
 
-router.patch('/labapproved',adminControllers.LabApproved)
-
-router.patch('/medicalapproved',adminControllers.MedicalApproved)
+router.patch('/orgnizationapproved',adminControllers.orgnizationApproved)
 
 module.exports = router;

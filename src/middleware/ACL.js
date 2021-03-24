@@ -1,4 +1,4 @@
-exports.isDoctor = (req, res, next) => {
+exports.    isDoctor = (req, res, next) => {
     // console.log(req.identity);
     try {
         if(req.identity === "D"){

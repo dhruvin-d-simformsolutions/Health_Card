@@ -6,9 +6,8 @@ const { encryptPassword } = require('../utils/encrypation');
 
 
 var PatientSchema = new Schema({
-    healthid: {
+    uniqueid: {
         type: String,
-        unique: true,
         trim: true,
     },
     details: {
@@ -24,6 +23,7 @@ var PatientSchema = new Schema({
         gender: {
             type: String,
             required: true,
+            enum: ["Male", "Female"]
         },
         // TODO : change type to date
         dob: {
@@ -33,7 +33,6 @@ var PatientSchema = new Schema({
         aadharNumber: {
             type: Number,
             required: true,
-            unique: true
         }
     },
     password: {
@@ -60,6 +59,10 @@ var PatientSchema = new Schema({
         },
         relation: String
     },
+    userRole : {
+        type : String,
+        default : "Patient"
+    },
     contacts: {
         mobile: {
             type: Number,
@@ -67,7 +70,6 @@ var PatientSchema = new Schema({
         },
         email: {
             type: String,
-            unique: true,
             required: true,
             trim: true,
             lowercase: true,
@@ -115,9 +117,9 @@ var PatientSchema = new Schema({
 //     timestamps: true
 // })
 PatientSchema.virtual('histories',{
-    ref : 'HistoryOfPatient',
-    localField : 'healthid',
-    foreignField : 'healthid'
+    ref : 'patient',
+    localField : 'uniqueid',
+    foreignField : 'uniqueid'
 })
 
 
@@ -136,5 +138,5 @@ PatientSchema.pre('save',async function(next){
     }
     next();
 })
-const Patient = mongoose.model('patient', PatientSchema);
+const Patient = mongoose.model('patient', PatientSchema,"data");
 module.exports = Patient;

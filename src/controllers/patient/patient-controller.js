@@ -4,7 +4,7 @@ exports.Fetchpatient = async (req, res) => {
     const id = req.query.id
     try {
         const patient = await Patient.findOne({
-            healthid: id
+            uniqueid: id
         })
         console.log(patient);
         if (!patient) {
