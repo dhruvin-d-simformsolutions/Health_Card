@@ -1,7 +1,7 @@
 const Patient = require("../../models/patient");
-const Medical = require("../../models/medical");
-const Lab = require("../../models/lab");
 const Doctor = require("../../models/doctor");
+
+const GeneralLabAndMedical = require("../../models/orgnization");
 
 const { loginSchema,signUpSchema } = require("../../validation/JoiValidationSchemas");
 const { findByCredentials } = require("../../utils/findByCredentials");
@@ -12,31 +12,30 @@ const { mailRegistration, mailforgetpassword } = require("../../utils/mailServic
 const passport = require("passport");
 
 exports.SingUp = async (req, res) => {
+
   try {
-    await signUpSchema.validateAsync(req.body)
+  
     const first = req.body.changebit[0]; 
+    // console.log(req.body.OrgnizationType[0]);
     let user;
     switch (first) {
       case "P":
         user = new Patient(req.body);
-        user.healthid = "P" + user.details.aadharNumber;
+        user.uniqueid = "P" + user.details.aadharNumber;
         // mailRegistration(user.contacts.email,"Patient",user.details.fname,user.details.lname,user.healthid)
         // mailservice(user.contacts.email,"Patient",user.details.fname,user.details.lname,user.healthid)
         break;
       case "D":
         user = new Doctor(req.body);
-        user.doctorid = "D" + user.details.licenseNumber;
+        user.uniqueid = "D" + user.licenseNumber;
         // mailRegistration(user.contacts.email,"Doctor",user.details.fname,user.details.lname,user.doctorid)
         break;
       case "L":
-        user = new Lab(req.body);
-        user.labid = "L" + user.ownerdetails.licenseNumber;
-        // mailRegistration(user.contacts.email,"Lab",user.ownerdetails.fname,user.ownerdetails.lname,user.labid)
-        break;
       case "M":
-        user = new Medical(req.body);
-        user.medicalid = "M" + user.ownerdetails.licenseNumber;
-        // mailRegistration(user.contacts.email,"Medical",user.ownerdetails.fname,user.ownerdetails.lname,user.medicalid)
+        user = new GeneralLabAndMedical(req.body);
+        console.log(user);
+        user.uniqueid = first + user.licenseNumber;
+        // mailRegistration(user.contacts.email,"Lab",user.ownerdetails.fname,user.ownerdetails.lname,user.labid)
         break;
       default:
         throw new Error("Invalid UserName !!!");
@@ -50,6 +49,11 @@ exports.SingUp = async (req, res) => {
   } catch (err) {
     res.status(400).send(err.message);
   }
+  
+  
+  
+  
+  
 };
 
 exports.Login = async (req, res,next) => {
@@ -74,7 +78,6 @@ exports.Login = async (req, res,next) => {
     //   token,
     // });
     
-    
     //Authentication with passport Only
     passport.authenticate('local',async (error, user, info)=>{
       if (error) {
@@ -96,11 +99,11 @@ exports.Login = async (req, res,next) => {
 exports.Logout = async (req, res) => {
   try {  
   
-    req.session.destroy((err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
+    // req.session.destroy((err) => {
+    //   if (err) {
+    //     console.log(err);
+    //   }
+    // });
     req.user.token = undefined;
     await req.user.save();
     res.send("Logout Successful");
@@ -158,13 +161,13 @@ exports.ForgetPassword = async (req, res) => {
           );
         }
         break;
-      case "L":
-        userObject = await Lab.findOne({
-          labid: id,
+      case "L" || "M":
+        userObject = await GeneralLabAndMedical.findOne({
+          Orgnizationid: id,
         });
         if (userObject) {
           mailforgetpassword(
-            userObject.contacts.email,
+            userObject.ownerdetails.contacts.email,
             userObject.ownerdetails.fname,
             userObject.ownerdetails.lname,
             userObject.labid,
@@ -172,20 +175,6 @@ exports.ForgetPassword = async (req, res) => {
           );
         }
         // console.log(userObject);
-        break;
-      case "M":
-        userObject = await Medical.findOne({
-          medicalid: id,
-        });
-        if (userObject) {
-          mailforgetpassword(
-            userObject.contacts.email,
-            userObject.ownerdetails.fname,
-            userObject.ownerdetails.lname,
-            userObject.medicalid,
-            temporaryPassword
-          );
-        }
         break;
       default:
         throw new Error("Invalid UserName !!!");
@@ -209,10 +198,10 @@ exports.ForgetPassword = async (req, res) => {
 };
 
 (exports.UploadPDF = async (req, res) => {
-  if (req.user.details.license) {
-    req.user.details.license = req.file.buffer;
+  if (req.user.license) {
+    req.user.license = req.file.buffer;
   } else {
-    req.user.ownerdetails.license = req.file.buffer;
+    req.user.license = req.file.buffer;
   }
   await req.user.save();
   res.send();

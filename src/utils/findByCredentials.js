@@ -1,36 +1,49 @@
 const Patient = require("../models/patient");
-const Medical = require("../models/medical");
-const Lab = require("../models/lab");
 const Doctor = require("../models/doctor");
-const {comparePassword} = require('../utils/encrypation');
+const GeneralMedicalAndLab = require("../models/orgnization")
+const {
+    comparePassword
+} = require('../utils/encrypation');
 
-exports.findByCredentials =  async (username,password) => {
+exports.findByCredentials = async (username, password) => {
 
     const first = username[0];
     let user;
-    switch(first){
-        case "P": user = await Patient.findOne({healthid : username});
+    // user = await Doctor.findOne({uniqueid:username});
+    switch (first) {
+        case "P":
+            user = await Patient.findOne({
+                uniqueid: username
+            }, {
+                uniqueid: 1,
+                password: 1,
+            });
             break;
-        case "D": user = await Doctor.findOne({doctorid:username});
-            break;
-        case "L": user = await Lab.findOne({labid:username});
-            break;
-        case "M": user = await Medical.findOne({medicalid:username});
+        case "D":
+        case "M":
+        case "L":
+            user = await GeneralMedicalAndLab.findOne({
+                uniqueid: username
+            },{
+                uniqueid : 1,
+                password : 1,
+                approved : 1
+            });
             break;
         default:
             throw new Error("Invalid UserName !!!");
     }
-
-    // const patient = await Patient.findOne({healthid});
-    if(!user){
+    console.log(user.approved);
+    if (!user) {
         throw new Error("User is not Register yet");
     }
-    if(first != "P" && user.approved === false){
+    if (first != "P" && user.approved === false) {
         throw new Error("User is not Approved !!!")
     }
-    isverify = await comparePassword(password,user.password)
-    if(!isverify){
+    isverify = await comparePassword(password, user.password)
+    if (!isverify) {
         throw new Error('Incorrect Password !!!');
     }
+    console.log(user);
     return user;
 }

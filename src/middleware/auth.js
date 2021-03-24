@@ -1,8 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Patient = require("../models/patient");
-const Medical = require("../models/medical");
-const Lab = require("../models/lab");
-const Doctor = require("../models/doctor");
+const Doctor = require('../models/doctor');
+const GeneralMedicalAndLab = require("../models/orgnization")
 
 const auth = async (req, res, next) => {
     try {
@@ -10,35 +9,31 @@ const auth = async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.SECRETKEYFORJWT);
         let first = decoded._id[0];
         console.log(first);
-        let user;
+        let user;       
         switch (first) {
             case "P":
                 user = await Patient.findOne({
-                    healthid: decoded._id,
+                    uniqueid: decoded._id,
                     token: token,
                 });
                 break;
             case "D":
                 user = await Doctor.findOne({
-                    doctorid: decoded._id,
+                    uniqueid: decoded._id,
                     token: token,
                 });
                 break;
             case "L":
-                user = await Lab.findOne({
-                    labid: decoded._id,
-                    token: token,
-                });
-                break;
             case "M":
-                user = await Medical.findOne({
-                    medicalid: decoded._id,
+                user = await GeneralMedicalAndLab.findOne({
+                    uniqueid: decoded._id,
                     token: token,
                 });
                 break;
             default:
                 throw new Error("Invalid UserName !!!");
         }
+        
         if (!user) {
             throw new Error("User Not Found");
         }

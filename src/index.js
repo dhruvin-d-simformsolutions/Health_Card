@@ -32,7 +32,6 @@ const port = process.env.PORT || 3000;
 //Routers
 const IndeRouter = require('./routes/main');
 const PatientRouter = require('./routes/patient');
-const LabRouter = require('./routes/lab');
 const HistoryRouter = require('./routes/history');
 const AdminRouter = require('./routes/admin');
 
@@ -49,15 +48,15 @@ const app = express();
 
 
 //Express Session
-app.use(session({
-    secret: process.env.SECRETKEYFORSESSION,
-    resave: true,
-    cookie: {
-        maxAge: new Date(Date.now() + 1000 * 60 *24 *7 ), // 1 week
-    },
-    saveUninitialized: true,
-    store: storeToDatabase,
-}))
+    // app.use(session({
+    //     secret: process.env.SECRETKEYFORSESSION,
+    //     resave: true,
+    //     cookie: {
+    //         maxAge: new Date(Date.now() + 1000 * 60 *24 *7 ), // 1 week
+    //     },
+    //     saveUninitialized: true,
+    //     store: storeToDatabase,
+    // }))
 
 
 //Cors Configuration
@@ -106,7 +105,6 @@ app.get('/login',csrfProtection,(req,res,next)=>{
 })
 app.use('', IndeRouter);
 app.use('/patient', PatientRouter);
-app.use('/lab', LabRouter)
 app.use('/history', HistoryRouter);
 app.use('/admin', AdminRouter);
 
