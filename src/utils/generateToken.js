@@ -3,7 +3,6 @@ globalTokenGenerator = async function(user){
     id = user.uniqueid;
     const generatedtoken = jwt.sign({ _id: id.toString() }, process.env.SECRETKEYFORJWT,{ expiresIn: '1d' });
     user.token = generatedtoken;
-    // console.log(user.token);
     try {
         await user.save();
 
